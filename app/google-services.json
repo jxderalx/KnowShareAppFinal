@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "817491917176",
+    "project_id": "knowshareapp",
+    "storage_bucket": "knowshareapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:817491917176:android:1143f97d9cb7a7d044308d",
+        "android_client_info": {
+          "package_name": "com.apg.knowshareapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCugjOAf7TbOzMjPwy8Vwu5ogkcb6MAMDw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
