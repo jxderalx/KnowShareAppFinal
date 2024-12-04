@@ -1,6 +1,5 @@
 package com.apg.knowshareapp.ui.theme
 
-import androidx.compose.material3.ButtonColors
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -13,3 +12,5 @@ val Pink40 = Color(0xFF7D5260)
 
 val BoxFilterColor = Color(0x1D386FB6)
 val ButtonColor = Color(0xFF02454D)
+val White = Color(0xFFFFFFFF)
+
