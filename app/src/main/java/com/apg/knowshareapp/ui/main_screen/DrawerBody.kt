@@ -22,7 +22,7 @@ fun DrawerBody() {
     Box(modifier = Modifier.fillMaxSize()){
         Image(
             modifier = Modifier.fillMaxSize(),
-                //.padding(top = 170.dp), necesario para que no se coma el fondo azul el logo de la tienda
+                //.padding(top = 170.dp), //necesario para que no se coma el fondo azul el logo de la tienda
             painter = painterResource(id = R.drawable.drawer_body),
             contentDescription = "",
             alpha = 0.2f,
