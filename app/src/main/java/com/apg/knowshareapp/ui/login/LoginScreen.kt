@@ -22,16 +22,30 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.apg.knowshareapp.R
+import com.apg.knowshareapp.ui.login.data.MainScreenDataObject
 import com.apg.knowshareapp.ui.theme.BoxFilterColor
+import com.apg.knowshareapp.ui.theme.textError
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    onNavigateToMainScreen: (MainScreenDataObject) -> Unit
+) {
 
+    val auth = remember {
+        Firebase.auth
+    }
+
+    val errorState = remember {
+        mutableStateOf("")
+    }
 
     val emailState = remember {
         mutableStateOf("")
@@ -58,7 +72,7 @@ fun LoginScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Image(painter = painterResource(id = R.drawable.drawer_logo),
+        Image(painter = painterResource(id = R.drawable.logo),
             contentDescription = "Logo",
             modifier = Modifier.size(175.dp)
         )
@@ -85,55 +99,93 @@ fun LoginScreen() {
             passwordState.value = it
         }
         Spacer(modifier = Modifier.height(10.dp))
-        LoginButton(text = "Sign In") {
-
+        if(errorState.value.isNotEmpty()){
+            Text(
+                text = errorState.value,
+                fontSize = 17.sp,
+                color = textError,
+                textAlign = TextAlign.Center
+                )
         }
-        LoginButton(text = "Sign Up") { }
-
-    }
-}
-
-private fun signUp(auth: FirebaseAuth, email: String, password: String){
-    auth.createUserWithEmailAndPassword(email, password)
-        .addOnCompleteListener{
-            if(it.isSuccessful){
-                Log.d("MyLog", "Registro Correcto!!")
-            } else {
-                Log.d("MyLog", "Registro Fallido!!")
-            }
-        }
-}
-
-private fun signIn(auth: FirebaseAuth, email: String, password: String){
-    auth.signInWithEmailAndPassword(email, password)
-        .addOnCompleteListener{
-            if(it.isSuccessful){
-                Log.d("MyLog", "Inicio de Sesión Correcto!!")
-            } else {
-                Log.d("MyLog", "Inicio de Sesión Fallido!!")
-            }
-        }
-}
-
-private fun deleteAccount(auth: FirebaseAuth, email: String, password: String){
-    val credential = EmailAuthProvider.getCredential(email, password)
-    auth.currentUser?.reauthenticate(credential)?.addOnCompleteListener{
-        if(it.isSuccessful){
-            auth.currentUser?.delete()?.addOnCompleteListener{
-                if(it.isSuccessful){
-                    Log.d("MyLog", "Cuenta Eliminada Correctamente!!")
-                } else {
-                    Log.d("MyLog", "Error al Eliminar la Cuenta!!")
+        LoginButton(text = "Inicia sesión") {
+            signIn(
+                auth,
+                emailState.value,
+                passwordState.value,
+                onSignInSuccess = {navData ->
+                    onNavigateToMainScreen(navData)
+                },
+                onSignInFailure = { error ->
+                    errorState.value = error
                 }
-            }
-        } else {
-            Log.d("MyLog", "Error al Autenticar!!")
+            )
+        }
+        LoginButton(text = "Registrarse") {
+            signUp(
+                auth,
+                emailState.value,
+                passwordState.value,
+                onSignUpSuccess = {navData ->
+                    onNavigateToMainScreen(navData)
+                },
+                onSignUpFailure = { error ->
+                    errorState.value = error
+                }
+            )
         }
     }
 }
 
-private fun signOut(auth: FirebaseAuth){
-    auth.signOut()
-    Log.d("MyLog", "Sesión Cerrada Correctamente!!")
+fun signUp(
+    auth: FirebaseAuth,
+    email: String,
+    password: String,
+    onSignUpSuccess: (MainScreenDataObject) -> Unit,
+    onSignUpFailure: (String) -> Unit
+){
+    if (email.isBlank() || password.isBlank()){
+        onSignUpFailure("Para registrarte necesitas un correo y una contraseña.")
+        return
+    }
+    auth.createUserWithEmailAndPassword(email, password)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                onSignUpSuccess(
+                    MainScreenDataObject(
+                        task.result.user?.uid!!,
+                        task.result.user?.email!!
+                    )
+                )
+            }        }
+        .addOnFailureListener{
+            onSignUpFailure(it.message ?: "Error de registro")
+        }
 }
 
+fun signIn(
+    auth: FirebaseAuth,
+    email: String,
+    password: String,
+    onSignInSuccess: (MainScreenDataObject) -> Unit,
+    onSignInFailure: (String) -> Unit
+){
+    if (email.isBlank() || password.isBlank()){
+        onSignInFailure("Por favor, ingresa un correo y una contraseña para iniciar sesión.")
+        return
+    }
+
+    auth.signInWithEmailAndPassword(email, password)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                onSignInSuccess(
+                    MainScreenDataObject(
+                        task.result.user?.uid!!,
+                        task.result.user?.email!!
+                    )
+                )
+            }
+        }
+        .addOnFailureListener{
+            onSignInFailure(it.message ?: "Error de inicio de sesión")
+        }
+}

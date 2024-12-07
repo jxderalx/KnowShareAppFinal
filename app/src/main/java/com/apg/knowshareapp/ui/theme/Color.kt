@@ -14,3 +14,7 @@ val BoxFilterColor = Color(0x1D386FB6)
 val ButtonColor = Color(0xFF02454D)
 val White = Color(0xFFFFFFFF)
 val GrayLight = Color(0x32FFFFFF)
+
+val textError = Color(0xFF930101)
+
+val leftMenuColor = Color(0xFF00BCD5)

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.apg.knowshareapp.R
 import com.apg.knowshareapp.ui.theme.GrayLight
-import com.apg.knowshareapp.ui.theme.White
+import com.apg.knowshareapp.ui.theme.leftMenuColor
 
 @Composable
 fun DrawerBody() {
@@ -36,7 +35,7 @@ fun DrawerBody() {
         "BestSellers"
     )
 
-    Box(modifier = Modifier.fillMaxSize()){
+    Box(modifier = Modifier.fillMaxSize().background(leftMenuColor)){
         Image(
             modifier = Modifier.fillMaxSize(),
                 //.padding(top = 170.dp), //necesario para que no se coma el fondo azul el logo de la tienda
