@@ -7,6 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.apg.knowshareapp.ui.add_book_screen.AddBookScreen
+import com.apg.knowshareapp.ui.data.AddScreenObject
 import com.apg.knowshareapp.ui.login.LoginScreen
 import com.apg.knowshareapp.ui.login.data.LoginScreenObject
 import com.apg.knowshareapp.ui.login.data.MainScreenDataObject
@@ -20,7 +22,7 @@ class MainActivity : ComponentActivity() {
 
             NavHost(
                 navController = navController,
-                startDestination = LoginScreenObject) {
+                startDestination = AddScreenObject) {
 
                 composable<LoginScreenObject> {
                     LoginScreen{navData ->
@@ -30,7 +32,11 @@ class MainActivity : ComponentActivity() {
 
                 composable<MainScreenDataObject> {navEntry ->
                     val navData = navEntry.toRoute<MainScreenDataObject>()
-                    MainScreen()
+                    MainScreen(navData)
+                }
+
+                composable<AddScreenObject> { navEntry ->
+                    AddBookScreen()
                 }
             }
         }

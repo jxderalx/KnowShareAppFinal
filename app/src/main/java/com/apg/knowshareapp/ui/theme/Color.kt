@@ -18,3 +18,9 @@ val GrayLight = Color(0x32FFFFFF)
 val textError = Color(0xFF930101)
 
 val leftMenuColor = Color(0xFF00BCD5)
+
+val adminPanelColor = Color(0xFF02454D)
+
+val BoxFilterColorAddBook = Color(0x2600BCD5)
+
+val textAddBook = Color(0xFF263238  )

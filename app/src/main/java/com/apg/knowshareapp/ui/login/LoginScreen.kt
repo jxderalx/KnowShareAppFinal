@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -48,10 +49,10 @@ fun LoginScreen(
     }
 
     val emailState = remember {
-        mutableStateOf("")
+        mutableStateOf("pontigaalejandro25@gmail.com")
     }
     val passwordState = remember {
-        mutableStateOf("")
+        mutableStateOf("123456789")
     }
 
     Image(painter = painterResource(
@@ -62,9 +63,11 @@ fun LoginScreen(
         contentScale = ContentScale.Crop
     )
 
+    /*
     Box(modifier = Modifier.fillMaxSize()
         .background(BoxFilterColor)
     )
+     */
 
     Column(modifier = Modifier.fillMaxSize().padding(
         start = 38.dp, end = 38.dp

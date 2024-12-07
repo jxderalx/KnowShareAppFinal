@@ -21,7 +21,7 @@ import com.apg.knowshareapp.R
 import com.apg.knowshareapp.ui.theme.White
 
 @Composable
-fun DrawerHeader() {
+fun DrawerHeader(email: String) {
     Column(
         Modifier.fillMaxWidth()
             .height(170.dp)
@@ -36,10 +36,15 @@ fun DrawerHeader() {
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "KnowShare",
+            "KnowShare",
             color = Color.Black,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
+        )
+        Text(
+            email,
+            color = Color.Gray,
+            fontSize = 15.sp
         )
     }
 }
