@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
 
             NavHost(
                 navController = navController,
-                startDestination = AddScreenObject) {
+                startDestination = LoginScreenObject) {
 
                 composable<LoginScreenObject> {
                     LoginScreen{navData ->
@@ -32,11 +32,15 @@ class MainActivity : ComponentActivity() {
 
                 composable<MainScreenDataObject> {navEntry ->
                     val navData = navEntry.toRoute<MainScreenDataObject>()
-                    MainScreen(navData)
+                    MainScreen(navData){
+                        navController.navigate(AddScreenObject)
+                    }
                 }
 
                 composable<AddScreenObject> { navEntry ->
-                    AddBookScreen()
+                    AddBookScreen{
+                        navController.popBackStack()
+                    }
                 }
             }
         }

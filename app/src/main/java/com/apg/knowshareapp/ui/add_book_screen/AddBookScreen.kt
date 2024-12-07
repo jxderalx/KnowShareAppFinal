@@ -37,11 +37,17 @@ import com.apg.knowshareapp.ui.theme.BoxFilterColor
 import com.apg.knowshareapp.ui.theme.BoxFilterColorAddBook
 import com.apg.knowshareapp.ui.theme.textAddBook
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 
 @Preview(showBackground = true)
 @Composable
-fun AddBookScreen() {
+fun AddBookScreen(
+    onSaved: () -> Unit = {}
+) {
+    var selectedCategory = "BestSellers"
     val title = remember {
         mutableStateOf("")
     }
@@ -54,6 +60,14 @@ fun AddBookScreen() {
 
     val selectedImageUri = remember {
         mutableStateOf<Uri?>(null)
+    }
+
+    val firestore = remember {
+        Firebase.firestore
+    }
+
+    val storage = remember {
+        Firebase.storage
     }
 
     val imageLauncher = rememberLauncherForActivityResult(
@@ -114,7 +128,7 @@ fun AddBookScreen() {
         )
         Spacer(modifier = Modifier.height(15.dp))
         RoundedCornerDropDownMenu {selectedItem ->
-
+            selectedCategory = selectedItem
         }
         Spacer(modifier = Modifier.height(15.dp))
         RoundedCornerTextField(
@@ -145,7 +159,23 @@ fun AddBookScreen() {
 
         }
         LoginButton(text = "Guardar") {
+            saveBookImage(
+                selectedImageUri.value!!,
+                storage,
+                firestore,
+                Book(
+                    title = title.value,
+                    description = description.value,
+                    price = price.value,
+                    category = selectedCategory
+                ),
+                onSaved = {
+                    onSaved()
+                },
+                onError = {
 
+                }
+            )
         }
     }
 }
@@ -153,7 +183,10 @@ fun AddBookScreen() {
 private fun saveBookImage(
     uri: Uri,
     storage: FirebaseStorage,
-    book: Book
+    firestore: FirebaseFirestore,
+    book: Book,
+    onSaved: () -> Unit,
+    onError: () -> Unit
 ){
     val timeStamp = System.currentTimeMillis()
     val storageRef = storage.reference
@@ -162,7 +195,17 @@ private fun saveBookImage(
     val uploadTask = storageRef.putFile(uri)
     uploadTask.addOnSuccessListener {
         storageRef.downloadUrl.addOnSuccessListener {url ->
-
+            saveBookToFireStore(
+                firestore,
+                url.toString(),
+                book,
+                onSaved = {
+                    onSaved()
+                },
+                onError = {
+                    onError()
+                }
+            )
         }
 
     }
@@ -184,7 +227,10 @@ private fun saveBookToFireStore(
                 imageUrl = url)
         )
         .addOnSuccessListener {
-
+            onSaved()
+        }
+        .addOnFailureListener{
+            onError()
         }
 }
 
