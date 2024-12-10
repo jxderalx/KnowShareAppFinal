@@ -92,16 +92,18 @@ fun LoginScreen(
         RoundedCornerTextField(
             text = emailState.value,
             label = "Email",
-        ){
-            emailState.value = it
-        }
+            onValueChange = { emailState.value = it }
+        )
+
         Spacer(modifier = Modifier.height(10.dp))
+
         RoundedCornerTextField(
             text = passwordState.value,
             label = "Contraseña",
-        ){
-            passwordState.value = it
-        }
+            isPasswordField = true,
+            onValueChange = { passwordState.value = it }
+        )
+
         Spacer(modifier = Modifier.height(10.dp))
         if(errorState.value.isNotEmpty()){
             Text(

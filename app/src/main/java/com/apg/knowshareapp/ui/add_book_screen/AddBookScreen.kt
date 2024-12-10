@@ -142,37 +142,44 @@ fun AddBookScreen(
             fontFamily = FontFamily.Serif
         )
         Spacer(modifier = Modifier.height(15.dp))
+
         RoundedCornerDropDownMenu(selectedCategory.value) { selectedItem ->
             selectedCategory.value = selectedItem
         }
+
         Spacer(modifier = Modifier.height(15.dp))
+
         RoundedCornerTextField(
             text = title.value,
             label = "Título",
-        ){
-            title.value = it
-        }
+            onValueChange = { title.value = it }
+        )
+
         Spacer(modifier = Modifier.height(10.dp))
+
         RoundedCornerTextField(
             maxLines = 6,
             singleLine = false,
             text = description.value,
             label = "Descripción",
-        ){
-            description.value = it
-        }
+            onValueChange = { description.value = it }
+        )
+
         Spacer(modifier = Modifier.height(10.dp))
+
         RoundedCornerTextField(
             text = price.value,
             label = "Precio",
-        ){
-            price.value = it
-        }
+            onValueChange = { price.value = it }
+        )
+
         Spacer(modifier = Modifier.height(10.dp))
+
         LoginButton(text = "Subir imagen") {
             imageLauncher.launch("image/*")
 
         }
+
         LoginButton(text = "Guardar") {
 
             val book = Book(
@@ -284,14 +291,3 @@ private fun saveBookToFireStore(
             onError()
         }
 }
-
-
-
-
-
-
-
-
-
-
-
