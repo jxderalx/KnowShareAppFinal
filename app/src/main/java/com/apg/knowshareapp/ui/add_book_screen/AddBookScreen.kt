@@ -243,7 +243,8 @@ private fun saveBookImage(
             .child("book_images")
             .child("image_$timeStamp.jpg")
     } else{
-        storage.getReference(oldImageUrl)
+        val path = oldImageUrl.substringAfter("/o/").substringBefore("?").replace("%2F", "/")
+        storage.getReference(path)
     }
     val uploadTask = storageRef.putFile(uri)
     uploadTask.addOnSuccessListener {
@@ -259,7 +260,8 @@ private fun saveBookImage(
                 }
             )
         }
-
+    }.addOnFailureListener{
+        onError()
     }
 }
 

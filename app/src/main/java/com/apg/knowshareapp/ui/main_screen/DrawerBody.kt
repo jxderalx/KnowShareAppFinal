@@ -42,9 +42,10 @@ fun DrawerBody(
     onAdminClick: () -> Unit = {}
 ) {
     val categoriesList = listOf(
-        "Favoritos",
-        "Fantasía",
-        "Drama",
+        "Programación",
+        "Matemáticas",
+        "Física",
+        "Química",
         "BestSellers"
     )
 
