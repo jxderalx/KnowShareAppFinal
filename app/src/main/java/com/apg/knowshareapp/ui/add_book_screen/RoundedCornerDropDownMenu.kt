@@ -22,13 +22,16 @@ import com.apg.knowshareapp.ui.theme.ButtonColor
 
 @Composable
 fun RoundedCornerDropDownMenu(
+    defCategory: String,
     onOptionSelected: (String) -> Unit
 ) {
     val expanded = remember { mutableStateOf(false)}
-    val selectedOption = remember { mutableStateOf("BestSellers")}
+    val selectedOption = remember { mutableStateOf(defCategory)}
     val categoriesList = listOf(
-        "Fantasía",
-        "Drama",
+        "Programación",
+        "Matemáticas",
+        "Física",
+        "Química",
         "BestSellers"
     )
 

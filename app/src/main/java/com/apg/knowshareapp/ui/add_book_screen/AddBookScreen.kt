@@ -1,6 +1,8 @@
 package com.apg.knowshareapp.ui.add_book_screen
 
+import android.content.ContentResolver
 import android.net.Uri
+import android.util.Base64
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -19,9 +21,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -31,9 +32,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.apg.knowshareapp.R
 import com.apg.knowshareapp.data.Book
+import com.apg.knowshareapp.ui.data.AddScreenObject
 import com.apg.knowshareapp.ui.login.LoginButton
 import com.apg.knowshareapp.ui.login.RoundedCornerTextField
-import com.apg.knowshareapp.ui.theme.BoxFilterColor
 import com.apg.knowshareapp.ui.theme.BoxFilterColorAddBook
 import com.apg.knowshareapp.ui.theme.textAddBook
 import com.google.firebase.firestore.FirebaseFirestore
@@ -45,17 +46,28 @@ import com.google.firebase.storage.ktx.storage
 @Preview(showBackground = true)
 @Composable
 fun AddBookScreen(
+    navData: AddScreenObject = AddScreenObject(),
     onSaved: () -> Unit = {}
 ) {
-    var selectedCategory = "BestSellers"
+
+    val cv =  LocalContext.current.contentResolver
+
+    val selectedCategory = remember {
+        mutableStateOf(navData.category)
+    }
+
+    val navImageUrl = remember {
+        mutableStateOf(navData.imageUrl)
+    }
+
     val title = remember {
-        mutableStateOf("")
+        mutableStateOf(navData.title)
     }
     val description = remember {
-        mutableStateOf("")
+        mutableStateOf(navData.description)
     }
     val price = remember {
-        mutableStateOf("")
+        mutableStateOf(navData.price)
     }
 
     val selectedImageUri = remember {
@@ -72,12 +84,16 @@ fun AddBookScreen(
 
     val imageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) {uri ->
+    ) { uri ->
+        navImageUrl.value = ""
         selectedImageUri.value = uri
     }
 
     Image(painter = rememberAsyncImagePainter(
-        model = selectedImageUri.value),
+        model = navImageUrl.value.ifEmpty {
+            selectedImageUri.value
+        }
+    ),
         contentDescription = "BG",
         modifier = Modifier
             .fillMaxSize(),
@@ -100,17 +116,16 @@ fun AddBookScreen(
 
      */
 
-
-
-    Box(modifier = Modifier.fillMaxSize()
+    Box(modifier = Modifier
+        .fillMaxSize()
         .background(BoxFilterColorAddBook)
     )
 
-
-
-    Column(modifier = Modifier.fillMaxSize().padding(
-        start = 38.dp, end = 38.dp
-    ),
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(
+            start = 38.dp, end = 38.dp
+        ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -127,8 +142,8 @@ fun AddBookScreen(
             fontFamily = FontFamily.Serif
         )
         Spacer(modifier = Modifier.height(15.dp))
-        RoundedCornerDropDownMenu {selectedItem ->
-            selectedCategory = selectedItem
+        RoundedCornerDropDownMenu(selectedCategory.value) { selectedItem ->
+            selectedCategory.value = selectedItem
         }
         Spacer(modifier = Modifier.height(15.dp))
         RoundedCornerTextField(
@@ -139,7 +154,7 @@ fun AddBookScreen(
         }
         Spacer(modifier = Modifier.height(10.dp))
         RoundedCornerTextField(
-            maxLines = 7,
+            maxLines = 6,
             singleLine = false,
             text = description.value,
             label = "Descripción",
@@ -159,28 +174,62 @@ fun AddBookScreen(
 
         }
         LoginButton(text = "Guardar") {
-            saveBookImage(
-                selectedImageUri.value!!,
-                storage,
-                firestore,
-                Book(
-                    title = title.value,
-                    description = description.value,
-                    price = price.value,
-                    category = selectedCategory
-                ),
-                onSaved = {
-                    onSaved()
-                },
-                onError = {
 
-                }
+            val book = Book(
+                key = navData.key,
+                title = title.value,
+                description = description.value,
+                price = price.value,
+                category = selectedCategory.value,
             )
+
+            if (selectedImageUri.value != null ){
+                saveBookImage(
+                    navData.imageUrl,
+                    selectedImageUri.value!!,
+                    storage,
+                    firestore,
+                    book,
+                    onSaved = {
+                        onSaved()
+                    },
+                    onError = {
+
+                    }
+
+                )
+            }
+
+            else {
+                saveBookToFireStore(
+                    firestore,
+                    book.copy(imageUrl = navData.imageUrl),
+                    onSaved = {
+                        onSaved()
+                    },
+                    onError = {
+
+                    }
+                )
+            }
+
         }
     }
 }
 
+
+private fun imageToBase64(uri: Uri, contentResolver: ContentResolver): String {
+    val inputStream = contentResolver.openInputStream(uri)
+
+    val bytes = inputStream?.readBytes()
+    return bytes?.let {
+        Base64.encodeToString(it, Base64.DEFAULT)
+    } ?: ""
+}
+
+
 private fun saveBookImage(
+    oldImageUrl: String,
     uri: Uri,
     storage: FirebaseStorage,
     firestore: FirebaseFirestore,
@@ -189,16 +238,19 @@ private fun saveBookImage(
     onError: () -> Unit
 ){
     val timeStamp = System.currentTimeMillis()
-    val storageRef = storage.reference
-        .child("book_images")
-        .child("image_$timeStamp.jpg")
+    val storageRef = if(oldImageUrl.isEmpty()) {
+        storage.reference
+            .child("book_images")
+            .child("image_$timeStamp.jpg")
+    } else{
+        storage.getReference(oldImageUrl)
+    }
     val uploadTask = storageRef.putFile(uri)
     uploadTask.addOnSuccessListener {
         storageRef.downloadUrl.addOnSuccessListener {url ->
             saveBookToFireStore(
                 firestore,
-                url.toString(),
-                book,
+                book.copy(imageUrl = url.toString()),
                 onSaved = {
                     onSaved()
                 },
@@ -213,18 +265,15 @@ private fun saveBookImage(
 
 private fun saveBookToFireStore(
     firestore: FirebaseFirestore,
-    url: String,
     book: Book,
     onSaved: () -> Unit,
     onError: () -> Unit
 ){
     val db = firestore.collection("books")
-    val key = db.document().id
+    val key = book.key.ifEmpty { db.document().id }
     db.document(key)
         .set(
-            book.copy(
-                key = key,
-                imageUrl = url)
+            book.copy(key = key,)
         )
         .addOnSuccessListener {
             onSaved()

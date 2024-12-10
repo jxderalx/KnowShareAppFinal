@@ -24,3 +24,4 @@ val adminPanelColor = Color(0xFF02454D)
 val BoxFilterColorAddBook = Color(0x2600BCD5)
 
 val textAddBook = Color(0xFF263238  )
+

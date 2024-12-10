@@ -1,6 +1,5 @@
 package com.apg.knowshareapp.ui.main_screen
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -39,6 +38,7 @@ import com.google.firebase.ktx.Firebase
 
 @Composable
 fun DrawerBody(
+    onAdmin: (Boolean) -> Unit = {},
     onAdminClick: () -> Unit = {}
 ) {
     val categoriesList = listOf(
@@ -55,6 +55,7 @@ fun DrawerBody(
     LaunchedEffect(Unit) {
         isAdmin {isAdmin ->
             isAdminState.value = isAdmin
+            onAdmin(isAdmin)
         }
     }
 
