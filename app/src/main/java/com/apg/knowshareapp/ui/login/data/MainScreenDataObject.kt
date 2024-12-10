@@ -6,5 +6,4 @@ import kotlinx.serialization.Serializable
 data class MainScreenDataObject(
     val uid: String = "",
     val email: String = "",
-
 )

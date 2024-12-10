@@ -8,17 +8,17 @@ sealed class BottomMenuItem(
     val iconId: Int,
 ) {
     object Home : BottomMenuItem(
-        route = "",
+        route = "home",
         title = "Home",
         iconId = R.drawable.ic_home
     )
     object Favs : BottomMenuItem(
-        route = "",
+        route = "favs",
         title = "Favs",
         iconId = R.drawable.ic_favs
     )
     object Settings : BottomMenuItem(
-        route = "",
+        route = "settings",
         title = "Settings",
         iconId = R.drawable.ic_settings
     )

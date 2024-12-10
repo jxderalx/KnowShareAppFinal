@@ -12,7 +12,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 
 @Composable
-fun BottomMenu() {
+fun BottomMenu(
+    selectedTab: String,
+    onTabSelected: (String) -> Unit
+) {
     val items = listOf(
         BottomMenuItem.Home,
         BottomMenuItem.Favs,
@@ -26,9 +29,9 @@ fun BottomMenu() {
     ) {
         items.forEach { item ->
             NavigationBarItem(
-                selected = selectedItem.value == item.title,
+                selected = selectedTab == item.route,
                 onClick = {
-                    selectedItem.value = item.title
+                    onTabSelected(item.route)
                 },
                 icon = {
                     Icon(

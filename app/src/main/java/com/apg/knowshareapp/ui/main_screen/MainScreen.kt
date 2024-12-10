@@ -18,8 +18,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.apg.knowshareapp.data.Book
+import com.apg.knowshareapp.ui.favorites_screen.FavsScreen
 import com.apg.knowshareapp.ui.login.data.MainScreenDataObject
 import com.apg.knowshareapp.ui.main_screen.bottom_menu.BottomMenu
+import com.apg.knowshareapp.ui.main_screen.bottom_menu.BottomMenuItem
+import com.apg.knowshareapp.ui.settings_screen.SettingsScreen
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -33,14 +36,13 @@ fun MainScreen(
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
-    val booksListState = remember {
-        mutableStateOf(emptyList<Book>())
-    }
-    val isAdminState = remember {
-        mutableStateOf(false)
-    }
+    val booksListState = remember { mutableStateOf(emptyList<Book>()) }
+    val isAdminState = remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit){
+    // Estado para controlar la pantalla activa
+    val selectedTab = remember { mutableStateOf(BottomMenuItem.Home.route) }
+
+    LaunchedEffect(Unit) {
         val db = Firebase.firestore
         getAllBooks(db) { books ->
             booksListState.value = books
@@ -53,14 +55,8 @@ fun MainScreen(
         drawerContent = {
             Column(modifier = Modifier.fillMaxWidth(0.7f)) {
                 DrawerHeader(navData.email)
-                DrawerBody(
-                    onAdmin = {isAdmin ->
-                        isAdminState.value = isAdmin
-                    }
-                ){
-                    coroutineScope.launch {
-                        drawerState.close()
-                    }
+                DrawerBody(onAdmin = { isAdmin -> isAdminState.value = isAdmin }) {
+                    coroutineScope.launch { drawerState.close() }
                     onAdminClick()
                 }
             }
@@ -69,23 +65,43 @@ fun MainScreen(
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             bottomBar = {
-                BottomMenu()
+                BottomMenu(
+                    selectedTab = selectedTab.value,
+                    onTabSelected = { tab ->
+                        selectedTab.value = tab
+                    }
+                )
             }
-        ) {paddingValues ->
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier.fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                items(booksListState.value){ book ->
-                    BookListItemUi(isAdminState.value, book){ book ->
-                        onBookEditClick(book)
+        ) { paddingValues ->
+            Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+                // Contenido dinámico basado en la pestaña seleccionada
+                when (selectedTab.value) {
+                    BottomMenuItem.Home.route -> {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(booksListState.value) { book ->
+                                BookListItemUi(isAdminState.value, book) { book ->
+                                    onBookEditClick(book)
+                                }
+                            }
+                        }
+                    }
+
+                    BottomMenuItem.Favs.route -> {
+                        FavsScreen()
+                    }
+
+                    BottomMenuItem.Settings.route -> {
+                        SettingsScreen()
                     }
                 }
             }
         }
     }
 }
+
 
 private fun getAllBooks(
     db: FirebaseFirestore,
