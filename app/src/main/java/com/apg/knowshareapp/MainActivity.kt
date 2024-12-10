@@ -22,31 +22,37 @@ class MainActivity : ComponentActivity() {
 
             NavHost(
                 navController = navController,
-                startDestination = LoginScreenObject) {
-
+                startDestination = LoginScreenObject
+            ) {
                 composable<LoginScreenObject> {
-                    LoginScreen{ navData ->
+                    LoginScreen { navData ->
                         navController.navigate(navData)
                     }
                 }
 
-                composable<MainScreenDataObject> {navEntry ->
+                composable<MainScreenDataObject> { navEntry ->
                     val navData = navEntry.toRoute<MainScreenDataObject>()
                     MainScreen(
                         navData,
                         onBookEditClick = { book ->
-                            navController.navigate(AddScreenObject(
-                                key = book.key,
-                                title = book.title,
-                                description = book.description,
-                                price = book.price,
-                                category = book.category,
-                                imageUrl = book.imageUrl
-                            ))
+                            navController.navigate(
+                                AddScreenObject(
+                                    key = book.key,
+                                    title = book.title,
+                                    description = book.description,
+                                    price = book.price,
+                                    category = book.category,
+                                    imageUrl = book.imageUrl
+                                )
+                            )
+                        },
+                        onAdminClick = {
+                            navController.navigate(AddScreenObject()) // Navegación directa al AddBookScreen
+                        },
+                        onLogout = {
+                            navController.navigate(LoginScreenObject) // <-- Logout redirige al LoginScreen
                         }
-                    ){
-                        navController.navigate(AddScreenObject())
-                    }
+                    )
                 }
 
                 composable<AddScreenObject> { navEntry ->

@@ -18,7 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.apg.knowshareapp.data.Book
-import com.apg.knowshareapp.ui.favorites_screen.FavsScreen
+import com.apg.knowshareapp.ui.favs_screen.FavsScreen
 import com.apg.knowshareapp.ui.login.data.MainScreenDataObject
 import com.apg.knowshareapp.ui.main_screen.bottom_menu.BottomMenu
 import com.apg.knowshareapp.ui.main_screen.bottom_menu.BottomMenuItem
@@ -32,15 +32,15 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     navData: MainScreenDataObject,
     onBookEditClick: (Book) -> Unit,
-    onAdminClick: () -> Unit
+    onAdminClick: () -> Unit,
+    onLogout: () -> Unit
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val booksListState = remember { mutableStateOf(emptyList<Book>()) }
     val isAdminState = remember { mutableStateOf(false) }
-
-    // Estado para controlar la pantalla activa
     val selectedTab = remember { mutableStateOf(BottomMenuItem.Home.route) }
+
 
     LaunchedEffect(Unit) {
         val db = Firebase.firestore
@@ -94,7 +94,7 @@ fun MainScreen(
                     }
 
                     BottomMenuItem.Settings.route -> {
-                        SettingsScreen()
+                        SettingsScreen(onLogout = onLogout)
                     }
                 }
             }

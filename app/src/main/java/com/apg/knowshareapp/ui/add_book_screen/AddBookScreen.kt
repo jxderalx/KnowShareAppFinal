@@ -143,6 +143,7 @@ fun AddBookScreen(
         )
         Spacer(modifier = Modifier.height(15.dp))
 
+        Text("Selecciona una categoría")
         RoundedCornerDropDownMenu(selectedCategory.value) { selectedItem ->
             selectedCategory.value = selectedItem
         }
