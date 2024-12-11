@@ -23,6 +23,7 @@ import com.apg.knowshareapp.ui.login.data.MainScreenDataObject
 import com.apg.knowshareapp.ui.main_screen.bottom_menu.BottomMenu
 import com.apg.knowshareapp.ui.main_screen.bottom_menu.BottomMenuItem
 import com.apg.knowshareapp.ui.settings_screen.SettingsScreen
+import com.apg.knowshareapp.ui.utils.BackPressHandler
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -33,8 +34,12 @@ fun MainScreen(
     navData: MainScreenDataObject,
     onBookEditClick: (Book) -> Unit,
     onAdminClick: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onExit: () -> Unit
+
 ) {
+    BackPressHandler(onExit = onExit)
+
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val booksListState = remember { mutableStateOf(emptyList<Book>()) }

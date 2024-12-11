@@ -47,11 +47,13 @@ class MainActivity : ComponentActivity() {
                             )
                         },
                         onAdminClick = {
-                            navController.navigate(AddScreenObject()) // Navegación directa al AddBookScreen
+                            navController.navigate(AddScreenObject()) //navegación directa al AddBookScreen
                         },
                         onLogout = {
-                            navController.navigate(LoginScreenObject) // <-- Logout redirige al LoginScreen
-                        }
+                            navController.navigate(LoginScreenObject) //el logout redirige al LoginScreen
+                        },
+                        onExit = { finish() } //cerrar la app
+
                     )
                 }
 

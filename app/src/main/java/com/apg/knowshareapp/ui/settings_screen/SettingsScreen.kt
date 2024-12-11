@@ -45,7 +45,7 @@ fun SettingsScreen(onLogout: () -> Unit) {
         Row {
             Icon(
                 imageVector = Icons.Default.Warning,
-                contentDescription = "Advertencia",
+                contentDescription = "",
                 tint = Color.Red,
                 modifier = Modifier.size(24.dp)
             )
@@ -77,7 +77,7 @@ fun SettingsScreen(onLogout: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007396))
         ) {
-            Text(text = "Cerrar sesión")
+            Text(text = "Cerrar sesión y salir")
         }
     }
 }
