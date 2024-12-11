@@ -235,6 +235,10 @@ private fun imageToBase64(uri: Uri, contentResolver: ContentResolver): String {
     } ?: ""
 }
 
+/*
+Uri quiere decir:
+Uniform Resource Identifier
+ */
 
 private fun saveBookImage(
     oldImageUrl: String,

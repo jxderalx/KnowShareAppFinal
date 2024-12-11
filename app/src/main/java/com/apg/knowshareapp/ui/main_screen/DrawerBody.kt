@@ -46,7 +46,9 @@ fun DrawerBody(
         "Matemáticas",
         "Física",
         "Química",
-        "BestSellers"
+        "BestSellers",
+        "Otros"
+
     )
 
     val isAdminState = remember {
