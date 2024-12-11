@@ -10,7 +10,9 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun BackPressHandler(onExit: () -> Unit) {
-    var showDialog by remember { mutableStateOf(false) }
+    var showDialog by remember {
+        mutableStateOf(false)
+    }
 
     BackHandler {
         showDialog = true
