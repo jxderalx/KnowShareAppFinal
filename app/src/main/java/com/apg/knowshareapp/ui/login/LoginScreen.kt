@@ -46,7 +46,7 @@ fun LoginScreen(
         mutableStateOf("")
     }
     val passwordState = remember {
-        mutableStateOf("k")
+        mutableStateOf("")
     }
 
     Image(painter = painterResource(
@@ -62,6 +62,7 @@ fun LoginScreen(
         .background(BoxFilterColor)
     )
      */
+
 
     Column(modifier = Modifier.fillMaxSize().padding(
         start = 38.dp, end = 38.dp

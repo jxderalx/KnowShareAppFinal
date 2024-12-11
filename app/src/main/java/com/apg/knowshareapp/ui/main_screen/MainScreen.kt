@@ -79,7 +79,6 @@ fun MainScreen(
             }
         ) { paddingValues ->
             Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-                // Contenido dinámico basado en la pestaña seleccionada
                 when (selectedTab.value) {
                     BottomMenuItem.Home.route -> {
                         LazyVerticalGrid(
